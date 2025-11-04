@@ -3,7 +3,15 @@
 #include <MicroOscSlip.h>
 MicroOscSlip<128> monOsc(&Serial);
 
+// gestion du hub
+#include <M5_PbHub.h>
+M5_PbHub myPbHub;
+
 #define BROCHE_ATOM_PIXEL 27
+#define BROCHE_ATOM_ANGLE 32
+
+// channel du hub où il est utilisé
+#define KEY_CHANNEL_ANGLE 0
 
 //CRGB keyPixel;
 CRGB atomPixel;
@@ -30,8 +38,17 @@ void setup() {
   atomPixel = CRGB(0,0,0);
   FastLED.show(); 
 
+  // PBHUB
+  Wire.begin();
+  myPbHub.begin();
+
 }
 
 void loop() {
-  
+
+  // oscslip angle unit 
+  int valueAngle = myPbHub.analogRead(KEY_CHANNEL_ANGLE);
+  monOsc.sendInt("/angle", valueAngle);
+
+  delay(100);
 }
