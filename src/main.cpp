@@ -3,20 +3,13 @@
 #include <MicroOscSlip.h>
 MicroOscSlip<128> monOsc(&Serial);
 
-// gestion du hub
-#include <M5_PbHub.h>
-M5_PbHub myPbHub;
-
-#define BROCHE_ATOM_FIL_BLANC 32
-#define BROCHE_ATOM_FIL_JAUNE 26
-#define BROCHE_ATOM_BOUTON 39
 #define BROCHE_ATOM_PIXEL 27
-
-// channel du hub où il est utilisé
-#define KEY_CHANNEL 0
 
 //CRGB keyPixel;
 CRGB atomPixel;
+
+//demarrage
+bool demarrage = true; 
 
 
 void setup() {
@@ -24,18 +17,29 @@ void setup() {
   // NE JAMAIS OUBLIER !!!
   Serial.begin(115200);
 
-  pinMode( BROCHE_ATOM_FIL_BLANC , INPUT_PULLUP );
-
-  Wire.begin();
-  myPbHub.begin();
+  // Initialiser FastLED pour contrôler le pixel RGB du M5Atom
+  FastLED.addLeds<WS2812, BROCHE_ATOM_PIXEL , GRB>(&atomPixel, 1); 
+  atomPixel = CRGB(255,255,255); // BLANC
 
 }
 
 void loop() {
 
-  // oscslip key unit
-  int press = myPbHub.digitalRead(KEY_CHANNEL);
-  monOsc.sendInt("/decollage", press);
-  delay(100);
+  if (demarrage == true) {
+    atomPixel = CRGB(255,0,0); // ROUGE
+    FastLED.show();
+    delay(1000); // PAUSE 1 SECONDE
+    atomPixel = CRGB(255,255,0); // JAUNE
+    FastLED.show();
+    delay(1000); // PAUSE 1 SECONDE
+    atomPixel = CRGB(0,255,0); // VERT
+    FastLED.show();
+    delay(1000); // PAUSE 1 SECONDE
+    demarrage = false;
+  } else {
+    atomPixel = CRGB(0,0,0);
+    FastLED.show(); 
+  }
+  
   
 }
